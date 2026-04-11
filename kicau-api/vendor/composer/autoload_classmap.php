@@ -12,6 +12,7 @@ return array(
     'App\\Http\\Controllers\\Api\\LikeController' => $baseDir . '/app/Http/Controllers/Api/LikeController.php',
     'App\\Http\\Controllers\\Api\\PostController' => $baseDir . '/app/Http/Controllers/Api/PostController.php',
     'App\\Http\\Controllers\\Api\\ProfileController' => $baseDir . '/app/Http/Controllers/Api/ProfileController.php',
+    'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Models\\Comment' => $baseDir . '/app/Models/Comment.php',
     'App\\Models\\Follow' => $baseDir . '/app/Models/Follow.php',
     'App\\Models\\Like' => $baseDir . '/app/Models/Like.php',

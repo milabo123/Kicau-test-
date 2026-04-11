@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'kicau/kicau-api',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '141820fa22a66776200d89028d28cbf5c943911f',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -383,9 +383,9 @@
             ),
         ),
         'kicau/kicau-api' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '141820fa22a66776200d89028d28cbf5c943911f',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

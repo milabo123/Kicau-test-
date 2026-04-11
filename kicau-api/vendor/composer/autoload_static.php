@@ -542,6 +542,7 @@ class ComposerStaticInit9e895c4e7211efdc7a74769847813f6e
         'App\\Http\\Controllers\\Api\\LikeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/LikeController.php',
         'App\\Http\\Controllers\\Api\\PostController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/PostController.php',
         'App\\Http\\Controllers\\Api\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/ProfileController.php',
+        'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Models\\Comment' => __DIR__ . '/../..' . '/app/Models/Comment.php',
         'App\\Models\\Follow' => __DIR__ . '/../..' . '/app/Models/Follow.php',
         'App\\Models\\Like' => __DIR__ . '/../..' . '/app/Models/Like.php',

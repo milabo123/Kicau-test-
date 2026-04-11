@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Jika tidak ada, redirect ke halaman login.
  */
 class CheckApiToken
+{
     /**
      * Memproses Request yang masuk.
      * 
