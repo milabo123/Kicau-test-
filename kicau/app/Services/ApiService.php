@@ -147,11 +147,14 @@ class ApiService
     // ──────────────────────────── Profile ────────────────────────────
 
     /**
-     * Mengambil data satu pengguna dan jejak riwayat kicauannya untuk halaman UI Profile.
+     * Mengambil detail profil spesifik beserta daftar postingan-nya.
      */
-    public function getProfile(string $username): Response
+    public function getProfile(string $username, string $tab = 'posts', int $page = 1): Response
     {
-        return $this->authRequest()->get("{$this->baseUrl}/users/{$username}");
+        return $this->authRequest()->get("{$this->baseUrl}/users/{$username}", [
+            'tab'  => $tab,
+            'page' => $page,
+        ]);
     }
 
     /**

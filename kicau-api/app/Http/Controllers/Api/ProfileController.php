@@ -28,25 +28,52 @@ class ProfileController extends Controller
     {
         // Temukan pengguna atau gagalkan dengan menghasilkan respons 404
         $user           = User::where('username', $username)->firstOrFail();
-        // Muat segala daftar postingan yang telah dilontarkan/dirilis pengguna bersangkutan
-        $posts          = $user->posts()->with(['comments', 'likes'])->latest()->paginate(12);
         $isFollowing    = $request->user() ? $request->user()->isFollowing($user) : false;
         $followersCount = $user->followers()->count();
         $followingCount = $user->following()->count();
 
-        return response()->json([
-            'user' => [
-                'id'              => $user->id,
-                'name'            => $user->name,
-                'username'        => $user->username,
-                'bio'             => $user->bio,
-                'avatar_url'      => $user->avatar_url,
-                'followers_count' => $followersCount,
-                'following_count' => $followingCount,
-                'is_following'    => $isFollowing,
-                'created_at'      => $user->created_at,
-            ],
-            'posts' => [
+        $tab = $request->query('tab', 'posts');
+        $postsData = null;
+        $networkData = null;
+
+        if ($tab === 'followers') {
+            $network = $user->followers()->with('follower')->paginate(15);
+            $networkData = [
+                'data' => $network->getCollection()->map(function($f) {
+                    $u = $f->follower;
+                    return [
+                        'id'         => $u ? $u->id : null,
+                        'name'       => $u ? $u->name : '',
+                        'username'   => $u ? $u->username : '',
+                        'bio'        => $u ? $u->bio : '',
+                        'avatar_url' => $u ? $u->avatar_url : '',
+                    ];
+                })->filter(fn($i) => !empty($i['username']))->values(), // Prevent broken entries
+                'current_page' => $network->currentPage(),
+                'last_page'    => $network->lastPage(),
+                'total'        => $network->total(),
+            ];
+        } elseif ($tab === 'following') {
+            $network = $user->following()->with('following')->paginate(15);
+            $networkData = [
+                'data' => $network->getCollection()->map(function($f) {
+                    $u = $f->following;
+                    return [
+                        'id'         => $u ? $u->id : null,
+                        'name'       => $u ? $u->name : '',
+                        'username'   => $u ? $u->username : '',
+                        'bio'        => $u ? $u->bio : '',
+                        'avatar_url' => $u ? $u->avatar_url : '',
+                    ];
+                })->filter(fn($i) => !empty($i['username']))->values(), // Prevent broken entries
+                'current_page' => $network->currentPage(),
+                'last_page'    => $network->lastPage(),
+                'total'        => $network->total(),
+            ];
+        } else {
+            // Muat segala daftar postingan yang telah dilontarkan/dirilis pengguna bersangkutan
+            $posts = $user->posts()->with(['comments', 'likes'])->latest()->paginate(12);
+            $postsData = [
                 'data'         => $posts->getCollection()->map(fn($p) => [
                     'id'             => $p->id,
                     'body'           => $p->body,
@@ -59,7 +86,25 @@ class ProfileController extends Controller
                 'current_page' => $posts->currentPage(),
                 'last_page'    => $posts->lastPage(),
                 'total'        => $posts->total(),
+            ];
+        }
+
+        return response()->json([
+            'user' => [
+                'id'              => $user->id,
+                'name'            => $user->name,
+                'username'        => $user->username,
+                'bio'             => $user->bio,
+                'avatar_url'      => $user->avatar_url,
+                'posts_count'     => $user->posts()->count(),
+                'followers_count' => $followersCount,
+                'following_count' => $followingCount,
+                'is_following'    => $isFollowing,
+                'created_at'      => $user->created_at,
             ],
+            'tab'     => $tab,
+            'posts'   => $postsData,
+            'network' => $networkData,
         ]);
     }
 

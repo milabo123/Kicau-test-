@@ -24,7 +24,10 @@ class ProfileController extends Controller
      */
     public function show(Request $request, string $username)
     {
-        $response = $this->api->getProfile($username);
+        $tab = $request->query('tab', 'posts');
+        $page = $request->query('page', 1);
+
+        $response = $this->api->getProfile($username, $tab, $page);
 
         if ($response->notFound()) {
             abort(404); // Jika JSON API menegaskan 404 (Objek Entitas tidak ditemukan), alihkan user ke UI Laravel 404 Not Found
@@ -40,8 +43,11 @@ class ProfileController extends Controller
         // Menginjeksikan pecahan data API yang berbeda ke dalam variabel terpisah di struktur Blade UI 
         return view('profile.show', [
             'user'           => $data['user'],
-            'postsData'      => $data['posts'],
+            'tab'            => $data['tab'] ?? 'posts',
+            'postsData'      => $data['posts'] ?? null,
+            'networkData'    => $data['network'] ?? null,
             'isFollowing'    => $data['user']['is_following'],
+            'postsCount'     => $data['user']['posts_count'] ?? 0,
             'followersCount' => $data['user']['followers_count'],
             'followingCount' => $data['user']['following_count'],
         ]);
