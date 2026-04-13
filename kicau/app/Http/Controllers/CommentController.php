@@ -27,11 +27,12 @@ class CommentController extends Controller
         // Validasi secara lokal di sisi form frontend sebelum dikirimkan ke API backend 
         // guna menghemat bandwidth jika isian kosong.
         $request->validate([
-            'body' => 'required|string|max:300',
+            'body'      => 'required|string|max:300',
+            'parent_id' => 'nullable|integer',
         ]);
 
         // Teruskan data ke API server melalui ApiService
-        $response = $this->api->createComment($id, $request->body);
+        $response = $this->api->createComment($id, $request->body, $request->parent_id);
 
         if ($response->failed()) {
             // Jika ada indikasi bahwa klien menggunakan JS Fetch (AJAX), kembalikan raw data berbentuk JSON balasan error API
@@ -59,6 +60,28 @@ class CommentController extends Controller
      * @param int $id ID Komentar yang akan diterminasi.
      * @return \Illuminate\Http\RedirectResponse
      */
+    public function update(Request $request, int $id)
+    {
+        $request->validate([
+            'body' => 'required|string|max:300',
+        ]);
+
+        $response = $this->api->updateComment($id, $request->body);
+
+        if ($response->failed()) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => $response->json('message', 'Gagal memperbarui komentar.')], 400);
+            }
+            return back()->with('error', $response->json('message', 'Gagal memperbarui komentar.'));
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json($response->json());
+        }
+
+        return back()->with('success', 'Komentar berhasil diperbarui.');
+    }
+
     public function destroy(int $id)
     {
         $response = $this->api->deleteComment($id);
@@ -68,5 +91,23 @@ class CommentController extends Controller
         }
 
         return back()->with('success', 'Komentar berhasil dihapus.');
+    }
+
+    /**
+     * POST /comments/{id}/like
+     * Toggle like untuk komentar.
+     * 
+     * @param int $id ID Komentar
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function like(int $id)
+    {
+        $response = $this->api->toggleCommentLike($id);
+
+        if ($response->successful()) {
+            return response()->json($response->json());
+        }
+
+        return response()->json(['error' => 'Gagal menyukai komentar'], 400);
     }
 }

@@ -20,11 +20,14 @@ Route::middleware(['check.api.token'])->group(function () {
     // Posts
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+    Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
 
     // Comments
     Route::post('/posts/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
 
     // Likes
     Route::post('/posts/{id}/like', [LikeController::class, 'toggle'])->name('posts.like');

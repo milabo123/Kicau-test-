@@ -84,6 +84,11 @@ class ApiService
         return $this->authRequest()->get("{$this->baseUrl}/posts/{$id}");
     }
 
+    public function updatePost(int $id, string $body): Response
+    {
+        return $this->authRequest()->put("{$this->baseUrl}/posts/{$id}", compact('body'));
+    }
+
     public function deletePost(int $id): Response
     {
         return $this->authRequest()->delete("{$this->baseUrl}/posts/{$id}");
@@ -91,9 +96,17 @@ class ApiService
 
     // ──────────────────────────── Comments ────────────────────────────
 
-    public function createComment(int $postId, string $body): Response
+    public function createComment(int $postId, string $body, ?int $parentId = null): Response
     {
-        return $this->authRequest()->post("{$this->baseUrl}/posts/{$postId}/comments", compact('body'));
+        return $this->authRequest()->post("{$this->baseUrl}/posts/{$postId}/comments", [
+            'body'      => $body,
+            'parent_id' => $parentId,
+        ]);
+    }
+
+    public function updateComment(int $commentId, string $body): Response
+    {
+        return $this->authRequest()->put("{$this->baseUrl}/comments/{$commentId}", compact('body'));
     }
 
     public function deleteComment(int $commentId): Response
@@ -106,6 +119,11 @@ class ApiService
     public function toggleLike(int $postId): Response
     {
         return $this->authRequest()->post("{$this->baseUrl}/posts/{$postId}/like");
+    }
+
+    public function toggleCommentLike(int $commentId): Response
+    {
+        return $this->authRequest()->post("{$this->baseUrl}/comments/{$commentId}/like");
     }
 
     // ──────────────────────────── Follow ────────────────────────────

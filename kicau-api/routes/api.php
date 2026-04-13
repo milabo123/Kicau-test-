@@ -31,14 +31,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Posts
     Route::post('/posts',        [PostController::class, 'store']);
     Route::get('/posts/{post}',  [PostController::class, 'show']);
+    Route::put('/posts/{post}',  [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'destroy']);
 
     // Comments
     Route::post('/posts/{post}/comments',   [CommentController::class, 'store']);
+    Route::put('/comments/{comment}',       [CommentController::class, 'update']);
     Route::delete('/comments/{comment}',    [CommentController::class, 'destroy']);
 
     // Likes
     Route::post('/posts/{post}/like', [LikeController::class, 'toggle']);
+    Route::post('/comments/{comment}/like', [\App\Http\Controllers\Api\CommentLikeController::class, 'toggle']);
 
     // Follow
     Route::post('/users/{user}/follow', [FollowController::class, 'toggle']);

@@ -34,7 +34,7 @@ class PostController extends Controller
 
         // Eloquent query memfilter post mana saja berdasarkan himpunan followingIds 
         // dengan eager-loading relasi dan menerapkan sistem paginasi tiap 15 rekaman per-halaman.
-        $posts = Post::with(['user', 'comments.user', 'likes'])
+        $posts = Post::with(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes'])
             ->whereIn('user_id', $followingIds)
             ->latest() // Mengurutkan dari terbaru (kolom created_at DESC)
             ->paginate(15);
@@ -83,7 +83,7 @@ class PostController extends Controller
         ]);
 
         // Eager-loading kembali semua relasi yang ada sebelum di-return di response API 
-        $post->load(['user', 'comments.user', 'likes']);
+        $post->load(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes']);
 
         return response()->json([
             'message' => 'Kicauan berhasil dikirim! 🐦',
@@ -101,7 +101,7 @@ class PostController extends Controller
      */
     public function show(Request $request, Post $post)
     {
-        $post->load(['user', 'comments.user', 'likes']);
+        $post->load(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes']);
         return response()->json($this->transformPost($post, $request->user()));
     }
 
@@ -113,6 +113,31 @@ class PostController extends Controller
      * @param Post $post
      * @return \Illuminate\Http\JsonResponse
      */
+    public function update(Request $request, Post $post)
+    {
+        if ($post->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Tidak diizinkan mengedit kicauan ini.'], 403);
+        }
+
+        $request->validate([
+            'body' => 'nullable|string|max:500',
+        ]);
+
+        if (!$request->body && !$post->media_path) {
+            return response()->json(['message' => 'Post harus berisi teks atau media.'], 422);
+        }
+
+        $post->body = $request->body;
+        $post->save();
+
+        $post->load(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes']);
+
+        return response()->json([
+            'message' => 'Kicauan berhasil diperbarui.',
+            'post'    => $this->transformPost($post, Auth::user()),
+        ]);
+    }
+
     public function destroy(Request $request, Post $post)
     {
         if ($post->user_id !== Auth::id()) {
@@ -156,17 +181,30 @@ class PostController extends Controller
                 'username'   => $post->user->username,
                 'avatar_url' => $post->user->avatar_url,
             ],
-            'comments' => $post->comments->map(fn($c) => [
-                'id'         => $c->id,
-                'body'       => $c->body,
-                'created_at' => $c->created_at,
-                'user' => [
-                    'id'         => $c->user->id,
-                    'name'       => $c->user->name,
-                    'username'   => $c->user->username,
-                    'avatar_url' => $c->user->avatar_url,
-                ],
-            ]),
+            'comments' => $post->comments->whereNull('parent_id')->map(function($c) use ($authUser) {
+                return $this->transformComment($c, $authUser);
+            })->values(),
+        ];
+    }
+
+    private function transformComment($comment, $authUser): array
+    {
+        return [
+            'id'           => $comment->id,
+            'parent_id'    => $comment->parent_id,
+            'body'         => $comment->body,
+            'created_at'   => $comment->created_at,
+            'is_liked'     => $authUser ? $comment->isLikedBy($authUser) : false,
+            'likes_count'  => $comment->likes ? $comment->likes->count() : 0,
+            'user' => [
+                'id'         => $comment->user->id,
+                'name'       => $comment->user->name,
+                'username'   => $comment->user->username,
+                'avatar_url' => $comment->user->avatar_url,
+            ],
+            'replies' => $comment->replies ? $comment->replies->map(function($r) use ($authUser) {
+                return $this->transformComment($r, $authUser);
+            })->values() : [],
         ];
     }
 

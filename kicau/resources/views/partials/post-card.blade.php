@@ -33,18 +33,35 @@
                 </div>
 
                 @if($postUserId && $currentUserId && $postUserId === $currentUserId)
-                <form id="delete-post-{{ $postId }}" action="{{ route('posts.destroy', $postId) }}" method="POST">
-                    @csrf @method('DELETE')
-                    <button type="button" class="btn-action" onclick="confirmDelete('delete-post-{{ $postId }}', 'Kicauan ini akan dihapus permanen.')" title="Hapus kicauan">
-                        <i class="bi bi-trash3" style="font-size:0.95rem;"></i>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn-action" onclick="toggleEditPost({{ $postId }})" title="Edit kicauan">
+                        <i class="bi bi-pencil-square" style="font-size:0.95rem;"></i>
                     </button>
-                </form>
+                    <form id="delete-post-{{ $postId }}" action="{{ route('posts.destroy', $postId) }}" method="POST" class="mb-0">
+                        @csrf @method('DELETE')
+                        <button type="button" class="btn-action" onclick="confirmDelete('delete-post-{{ $postId }}', 'Kicauan ini akan dihapus permanen.')" title="Hapus kicauan">
+                            <i class="bi bi-trash3" style="font-size:0.95rem;"></i>
+                        </button>
+                    </form>
+                </div>
                 @endif
             </div>
 
             {{-- Body --}}
             @if(!empty($post['body']))
-                <p class="post-body">{{ $post['body'] }}</p>
+                <div id="post-body-{{ $postId }}">
+                    <p class="post-body">{{ $post['body'] }}</p>
+                </div>
+                {{-- Edit Post Form --}}
+                <div id="edit-post-form-{{ $postId }}" style="display:none;" class="mt-2 text-end">
+                    <form action="{{ route('posts.update', $postId) }}" method="POST" class="edit-post-handler">
+                        @csrf
+                        @method('PUT')
+                        <textarea name="body" class="form-control compose-input mb-2" rows="2" required maxlength="500">{{ $post['body'] }}</textarea>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditPost({{ $postId }})" style="font-size:0.75rem;">Batal</button>
+                        <button type="submit" class="btn btn-primary-kicau btn-sm" style="font-size:0.75rem;">Simpan</button>
+                    </form>
+                </div>
             @endif
 
             {{-- Media --}}

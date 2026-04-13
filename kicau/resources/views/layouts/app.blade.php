@@ -449,6 +449,20 @@ function confirmDelete(formId, message) {
     });
 }
 
+function toggleEditPost(postId) {
+    const bodyBox = document.getElementById(`post-body-${postId}`);
+    const formBox = document.getElementById(`edit-post-form-${postId}`);
+    if (bodyBox && formBox) {
+        if (formBox.style.display === 'none') {
+            bodyBox.style.display = 'none';
+            formBox.style.display = 'block';
+        } else {
+            bodyBox.style.display = 'block';
+            formBox.style.display = 'none';
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         const likeBtn = e.target.closest('.btn-like');

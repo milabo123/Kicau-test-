@@ -112,6 +112,35 @@ class PostController extends Controller
 
     /**
      * DELETE /posts/{id}
+     * Menghapus instans Postinga/Kicauan melalui perantara layanan API.
+     * 
+     * @param int $id ID postingan.
+     * @return \Illuminate\Http\RedirectResponse Kembali ke halaman `feed.index` setelah dihapus.
+     */
+    public function update(Request $request, int $id)
+    {
+        $request->validate([
+            'body' => 'required|string|max:500',
+        ]);
+
+        $response = $this->api->updatePost($id, $request->body);
+
+        if ($response->failed()) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => $response->json('message', 'Gagal memperbarui kicauan.')], 400);
+            }
+            return back()->with('error', $response->json('message', 'Gagal memperbarui kicauan.'));
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json($response->json());
+        }
+
+        return back()->with('success', 'Kicauan berhasil diperbarui.');
+    }
+
+    /**
+     * DELETE /posts/{id}
      * Menghancurkan instance Postingan/Kicau bersangkutan dari basis data platform.
      * 
      * @param int $id
