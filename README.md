@@ -25,6 +25,15 @@ Kicau utilizes a strictly decoupled, microservice-like architecture composed of 
 
 ---
 
+## ✨ Feature Spotlight (Latest Updates)
+
+- **Dual-Feed Timeline Architecture**: Users can instantaneously toggle between a **Global Network** (chronological posts from everyone on the platform) and a **Private Network** (posts isolated strictly to following accounts) seamlessly via the homepage navigation tabs.
+- **Dynamic Trending Keywords Engine**: The platform natively calculates the "Sedang Tren" (currently trending) hashtags algorithmically by parsing the most recent 100 posts on the fly using internal Regex without overloading the database schema.
+- **Interactive Network Management**: Profiles include dynamic tabbed interfaces separating core `Kicauan` (posts), `Pengikut` (Followers), and `Mengikuti` (Following), complete with global Search endpoints.
+- **Rich Seed Data Deployment**: Integrated a highly realistic suite of dummy posts saturated with platform logic and complex hashtags locally deployable using standard artisan commands!
+
+---
+
 ## 🚀 Precise Step-by-Step Setup Tutorial
 
 If you just cloned this project from GitHub, Laravel ignores sensitive files (`.env`) and certain empty directories by default. Because the app is split into two parts, you **must configure both independently** before you start!
