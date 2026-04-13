@@ -58,6 +58,14 @@ class Post extends Model
      */
     public function getMediaUrlAttribute(): ?string
     {
-        return $this->media_path ? url('storage/' . $this->media_path) : null;
+        if ($this->media_path) {
+            // Jika jalur yang tersimpan merupakan tautan mentah (raw http) dari internet, langsung balikkan nilainya
+            if (str_starts_with($this->media_path, 'http')) {
+                return $this->media_path;
+            }
+            // Jika tidak, asumsikan ini adalah file media lokal yang diupload dari Storage 
+            return url('storage/' . $this->media_path);
+        }
+        return null;
     }
 }

@@ -53,6 +53,22 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $u->id, 
                 'body' => 'Just another test post for the algorithm! Making sure #Explore and #Laravel stay firmly at the top.'
             ]);
+            \App\Models\Post::create([
+                'user_id' => $u->id, 
+                'body' => 'Pemilu kali ini sangat berwarna. Mari kita doakan yang terbaik untuk negeri ini. #HidupJokowi'
+            ]);
+            \App\Models\Post::create([
+                'user_id' => $u->id, 
+                'body' => 'Berita hari ini sangat memprihatinkan, apakah ini yang namanya darurat? #IndonesiaGelap'
+            ]);
+            \App\Models\Post::create([
+                'user_id' => $u->id, 
+                'body' => 'Semua aparat harusnya melindungi, bukan sebaliknya. Solidaritas tanpa batas. #1312'
+            ]);
+            \App\Models\Post::create([
+                'user_id' => $u->id, 
+                'body' => 'Belajar botani hari ini, ternyata tumbuhan berkeping satu itu sangat unik sirkulasinya! #Monokotil'
+            ]);
         }
     }
 }
