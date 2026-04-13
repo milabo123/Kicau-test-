@@ -315,6 +315,51 @@
         .dropdown-item-kicau:hover { background: rgba(108,99,255,0.12); color: var(--kicau-primary); }
         .dropdown-divider-kicau { border-color: var(--kicau-border); }
 
+        /* ── Lightbox Overlay ── */
+        #lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            animation: fadeIn 0.3s ease;
+        }
+        #lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            cursor: default;
+            animation: zoomIn 0.3s ease;
+        }
+        #lightbox .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #lightbox .close-lightbox:hover { color: var(--kicau-primary); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar-col { display: none; }
@@ -597,6 +642,25 @@ document.addEventListener('DOMContentLoaded', updateNotifBadge);
 setInterval(updateNotifBadge, 30000);
 </script>
 @endif
+
+{{-- Custom Lightbox --}}
+<div id="lightbox" onclick="closeLightbox()">
+    <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+</div>
+
+<script>
+function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Disable scroll
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Enable scroll
+}
+</script>
 
 @stack('scripts')
 </body>

@@ -71,7 +71,8 @@
             {{-- Media --}}
             @if($mediaUrl)
                 @if($mediaType === 'image')
-                    <img src="{{ $mediaUrl }}" class="post-media" alt="post media" loading="lazy">
+                    <img src="{{ $mediaUrl }}" class="post-media" alt="post media" loading="lazy"
+                         style="cursor:pointer;" onclick="openLightbox(this.src)">
                 @elseif($mediaType === 'video')
                     <video class="post-media" controls preload="metadata">
                         <source src="{{ $mediaUrl }}" type="video/mp4">
