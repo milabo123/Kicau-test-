@@ -27,15 +27,9 @@ class PostController extends Controller
     {
         $user = $request->user();
 
-        // Mengambil daftar ID teman-teman/user lain yang mana akun kita menjadi follower-nya
-        $followingIds   = $user->following()->pluck('following_id')->toArray();
-        // Menambahkan diri sendiri ke daftar ID tersebut sehingga kicau kita dapat terlihat di timeline sendiri
-        $followingIds[] = $user->id;
-
-        // Eloquent query memfilter post mana saja berdasarkan himpunan followingIds 
-        // dengan eager-loading relasi dan menerapkan sistem paginasi tiap 15 rekaman per-halaman.
+        // Mengambil semua post secara global dari seluruh user dengan eager loading,
+        // diurutkan dari yang paling baru (kronologis DESC)
         $posts = Post::with(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes'])
-            ->whereIn('user_id', $followingIds)
             ->latest() // Mengurutkan dari terbaru (kolom created_at DESC)
             ->paginate(15);
 
