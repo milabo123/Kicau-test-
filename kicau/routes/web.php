@@ -16,6 +16,7 @@ Route::middleware(['check.api.token'])->group(function () {
 
     // Feed / Timeline
     Route::get('/feed', [PostController::class, 'index'])->name('feed.index');
+    Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search.index');
 
     // Posts
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');

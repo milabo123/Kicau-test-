@@ -49,8 +49,12 @@
 
             {{-- Body --}}
             @if(!empty($post['body']))
+                @php
+                    $safeBody = htmlspecialchars($post['body'] ?? '');
+                    $formattedBody = preg_replace('/#(\w+)/', '<a href="' . route('search.index') . '?q=%23$1" class="text-decoration-none" style="color:var(--kicau-primary); font-weight:500;">#$1</a>', $safeBody);
+                @endphp
                 <div id="post-body-{{ $postId }}">
-                    <p class="post-body">{{ $post['body'] }}</p>
+                    <p class="post-body">{!! nl2br($formattedBody) !!}</p>
                 </div>
                 {{-- Edit Post Form --}}
                 <div id="edit-post-form-{{ $postId }}" style="display:none;" class="mt-2 text-end">

@@ -52,6 +52,17 @@ class ApiService
         return $this->authRequest()->get("{$this->baseUrl}/feed", ['page' => $page]);
     }
 
+    /**
+     * Mencari profil pengguna dan kicauan berdasarkan keyword atau #hashtag.
+     */
+    public function search(string $query, int $page = 1): Response
+    {
+        return $this->authRequest()->get("{$this->baseUrl}/search", [
+            'q'    => $query,
+            'page' => $page
+        ]);
+    }
+
     // ──────────────────────────── Posts ────────────────────────────
 
     /**

@@ -81,7 +81,11 @@
                         </div>
                         
                         <div id="comment-body-{{ $commentId }}">
-                            <p class="mb-1 mt-1" style="font-size:0.9rem;color:var(--kicau-text);">{{ $comment['body'] ?? '' }}</p>
+                            @php
+                                $safeBody = htmlspecialchars($comment['body'] ?? '');
+                                $formattedBody = preg_replace('/#(\w+)/', '<a href="' . route('search.index') . '?q=%23$1" class="text-decoration-none" style="color:var(--kicau-primary); font-weight:500;">#$1</a>', $safeBody);
+                            @endphp
+                            <p class="mb-1 mt-1" style="font-size:0.9rem;color:var(--kicau-text);">{!! nl2br($formattedBody) !!}</p>
                         </div>
 
                         {{-- Edit Comment Form --}}
@@ -161,7 +165,11 @@
                                         </div>
                                         
                                         <div id="comment-body-{{ $replyId }}">
-                                            <p class="mb-1 mt-1" style="font-size:0.85rem;color:var(--kicau-text);">{{ $reply['body'] ?? '' }}</p>
+                                            @php
+                                                $safeReplyBody = htmlspecialchars($reply['body'] ?? '');
+                                                $formattedReplyBody = preg_replace('/#(\w+)/', '<a href="' . route('search.index') . '?q=%23$1" class="text-decoration-none" style="color:var(--kicau-primary); font-weight:500;">#$1</a>', $safeReplyBody);
+                                            @endphp
+                                            <p class="mb-1 mt-1" style="font-size:0.85rem;color:var(--kicau-text);">{!! nl2br($formattedReplyBody) !!}</p>
                                         </div>
 
                                         {{-- Edit Reply Form --}}

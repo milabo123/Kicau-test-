@@ -332,6 +332,16 @@
         </a>
 
         @if(session('api_token'))
+        {{-- Global Search Bar --}}
+        <form action="{{ route('search.index') }}" method="GET" class="d-none d-md-flex mx-auto" style="max-width: 400px; width: 100%;">
+            <div class="input-group">
+                <span class="input-group-text" style="background:var(--kicau-surface2); border:1px solid var(--kicau-border); border-right:none; color:var(--kicau-text-muted);">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="q" class="form-control form-control-kicau" style="border-left:none; padding-left:0.5rem; background:var(--kicau-surface2);" placeholder="Cari kicauan, @akun, atau #hashtag" value="{{ request('q') }}">
+            </div>
+        </form>
+
         @php $sessionUser = session('user', []); @endphp
         <div class="d-flex align-items-center gap-2">
             <div class="dropdown">

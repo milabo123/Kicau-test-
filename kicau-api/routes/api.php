@@ -25,8 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
-    // Feed
+    // Feed & Search
     Route::get('/feed', [PostController::class, 'feed']);
+    Route::get('/search', [\App\Http\Controllers\Api\SearchController::class, 'index']);
 
     // Posts
     Route::post('/posts',        [PostController::class, 'store']);

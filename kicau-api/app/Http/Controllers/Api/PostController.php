@@ -164,7 +164,7 @@ class PostController extends Controller
      * @param object|null $authUser Referensi obj user API yang sedang berkunjung agar tahu parameter `is_liked` personal.
      * @return array Custom hash map standar
      */
-    private function transformPost(Post $post, ?object $authUser): array
+    public function transformPost(Post $post, ?object $authUser): array
     {
         return [
             'id'           => $post->id,
@@ -187,7 +187,7 @@ class PostController extends Controller
         ];
     }
 
-    private function transformComment($comment, $authUser): array
+    public function transformComment($comment, $authUser): array
     {
         return [
             'id'           => $comment->id,
@@ -216,7 +216,7 @@ class PostController extends Controller
      * @param object|null $authUser Referensi objek authorisasi
      * @return array
      */
-    private function transformPaginate($paginator, ?object $authUser): array
+    public function transformPaginate($paginator, ?object $authUser): array
     {
         return [
             'data'         => $paginator->getCollection()->map(fn($p) => $this->transformPost($p, $authUser))->values(),
