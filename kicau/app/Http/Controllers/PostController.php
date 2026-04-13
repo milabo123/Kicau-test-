@@ -24,9 +24,10 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $page     = $request->get('page', 1);
+        $filter   = $request->get('filter', 'all');
         
         // Panggil endpoint getFeed HTTP Request ke server API (kicau-api) melalui service internal kita
-        $response = $this->api->getFeed($page);
+        $response = $this->api->getFeed($page, $filter);
 
         // Apabila token invalid atau terhapus (expired token / 401 Unauthorized logiknya), 
         // fallback dan lempar user kembali mendarat di halaman gerbang masuk
@@ -36,10 +37,13 @@ class PostController extends Controller
 
         // Parsing JSON mentah dari HTTP Body Content API response 
         $data = $response->json();
+        $trendingTags = $response->json('trending_tags', []);
 
         // Render blade view dengan lemparan kumpulan Data (Array) Post & Pagination
         return view('feed.index', [
-            'postsData' => $data,
+            'postsData'    => $data,
+            'filter'       => $filter,
+            'trendingTags' => $trendingTags,
         ]);
     }
 

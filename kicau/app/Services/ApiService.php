@@ -42,14 +42,14 @@ class ApiService
     // ──────────────────────────── Feed ────────────────────────────
 
     /**
-     * Mengambil daftar kicauan untuk timeline utama (Feed).
-     * 
-     * @param int $page Halaman paginasi keberapa yang sedang diminta
-     * @return Response Objek respons dari backend API kicau-api
+     * Meminta data beranda (Feed/Timeline).
      */
-    public function getFeed(int $page = 1): Response
+    public function getFeed(int $page = 1, string $filter = 'all'): Response
     {
-        return $this->authRequest()->get("{$this->baseUrl}/feed", ['page' => $page]);
+        return $this->authRequest()->get("{$this->baseUrl}/feed", [
+            'page'   => $page,
+            'filter' => $filter
+        ]);
     }
 
     /**

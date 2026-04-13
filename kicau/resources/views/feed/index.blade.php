@@ -6,6 +6,7 @@
     $currentPage = $postsData['current_page'] ?? 1;
     $lastPage    = $postsData['last_page'] ?? 1;
     $total       = $postsData['total'] ?? 0;
+    $filter      = $filter ?? 'all';
 @endphp
 
 <div class="row g-4">
@@ -34,9 +35,31 @@
 
     {{-- Feed --}}
     <div class="col-lg-7 col-md-12">
-        <h5 class="fw-bold mb-3" style="color:var(--kicau-text);">
-            <i class="bi bi-house-fill me-2" style="color:var(--kicau-primary);"></i>Beranda
-        </h5>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0" style="color:var(--kicau-text);">
+                <i class="bi bi-house-fill me-2" style="color:var(--kicau-primary);"></i>Beranda
+            </h5>
+        </div>
+
+        {{-- Tabs Header --}}
+        <div class="mb-3" style="background:var(--kicau-surface); border:1px solid var(--kicau-border); border-radius:12px; overflow:hidden;">
+            <ul class="nav nav-fill">
+                <li class="nav-item">
+                    <a href="{{ route('feed.index', ['filter' => 'all']) }}" 
+                       class="nav-link fw-bold py-3 {{ $filter === 'all' ? 'active' : '' }}" 
+                       style="{{ $filter === 'all' ? 'color:var(--kicau-primary); background:rgba(108,99,255,0.05); border-bottom:3px solid var(--kicau-primary); border-radius:0;' : 'color:var(--kicau-text-muted);' }}">
+                        Semua
+                    </a>
+                </li>
+                <li class="nav-item border-start" style="border-color:var(--kicau-border)!important;">
+                    <a href="{{ route('feed.index', ['filter' => 'following']) }}" 
+                       class="nav-link fw-bold py-3 {{ $filter === 'following' ? 'active' : '' }}" 
+                       style="{{ $filter === 'following' ? 'color:var(--kicau-primary); background:rgba(108,99,255,0.05); border-bottom:3px solid var(--kicau-primary); border-radius:0;' : 'color:var(--kicau-text-muted);' }}">
+                        Mengikuti
+                    </a>
+                </li>
+            </ul>
+        </div>
 
         {{-- Compose Box --}}
         <div class="compose-box">
@@ -90,13 +113,13 @@
         @if($lastPage > 1)
         <div class="d-flex justify-content-center gap-2 mt-3">
             @if($currentPage > 1)
-                <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage - 1]) }}" class="btn btn-outline-kicau btn-sm">
+                <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage - 1, 'filter' => $filter]) }}" class="btn btn-outline-kicau btn-sm">
                     <i class="bi bi-chevron-left"></i> Sebelumnya
                 </a>
             @endif
             <span class="btn btn-sm" style="color:var(--kicau-text-muted);">Halaman {{ $currentPage }} / {{ $lastPage }}</span>
             @if($currentPage < $lastPage)
-                <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage + 1]) }}" class="btn btn-outline-kicau btn-sm">
+                <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage + 1, 'filter' => $filter]) }}" class="btn btn-outline-kicau btn-sm">
                     Berikutnya <i class="bi bi-chevron-right"></i>
                 </a>
             @endif
@@ -121,11 +144,23 @@
                 @endif
             </div>
 
-            {{-- App info --}}
-            <div class="sidebar-card text-center">
-                <div style="font-size:2rem;">🐦</div>
-                <div class="fw-bold mt-1" style="color:var(--kicau-primary);font-family:'Poppins',sans-serif;">Kicau</div>
-                <p class="mb-0 mt-1" style="font-size:0.8rem;color:var(--kicau-text-muted);">Platform berbagi momen & cerita</p>
+            {{-- Trending Topics --}}
+            <div class="sidebar-card">
+                <h6 class="fw-bold mb-3" style="color:var(--kicau-text);">
+                    <i class="bi bi-graph-up-arrow me-2" style="color:var(--kicau-primary);"></i>Sedang Tren
+                </h6>
+                <div class="d-flex flex-column gap-3">
+                    @forelse($trendingTags ?? [] as $topic)
+                        <div>
+                            <a href="{{ route('search.index', ['q' => '#'.$topic['tag']]) }}" class="text-decoration-none fw-bold" style="color:var(--kicau-text); display:block;">
+                                {{ '#'.ucfirst($topic['tag']) }}
+                            </a>
+                            <span style="font-size:0.8rem; color:var(--kicau-text-muted);">{{ $topic['count'] }} kicauan</span>
+                        </div>
+                    @empty
+                        <div style="font-size:0.85rem; color:var(--kicau-text-muted);">Belum ada tren saat ini.</div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>

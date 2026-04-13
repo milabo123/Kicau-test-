@@ -26,14 +26,56 @@ class PostController extends Controller
     public function feed(Request $request)
     {
         $user = $request->user();
+        $filter = $request->query('filter', 'all');
 
-        // Mengambil semua post secara global dari seluruh user dengan eager loading,
-        // diurutkan dari yang paling baru (kronologis DESC)
-        $posts = Post::with(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes'])
-            ->latest() // Mengurutkan dari terbaru (kolom created_at DESC)
-            ->paginate(15);
+        $query = Post::with(['user', 'comments.user', 'comments.likes', 'comments.replies.user', 'comments.replies.likes', 'likes']);
 
-        return response()->json($this->transformPaginate($posts, $user));
+        // Jika user memilih tab "Mengikuti", aplikasikan pembatasan kueri profil
+        if ($filter === 'following') {
+            $followingIds   = $user->following()->pluck('following_id')->toArray();
+            $followingIds[] = $user->id; // Tampilkan juga posts milik dia sendiri
+            $query->whereIn('user_id', $followingIds);
+        }
+
+        // Mengurutkan dari terbaru (kolom created_at DESC)
+        $posts = $query->latest()->paginate(15);
+
+        // --- Start: Trending Hashtags Calculation ---
+        // Ambil 100 post terakhir dari seluruh platform untuk dianalisis
+        $recentPosts = Post::latest()->take(100)->get(['body']);
+        $tagCounts = [];
+
+        foreach ($recentPosts as $p) {
+            if (preg_match_all('/#(\w+)/', $p->body, $matches)) {
+                // $matches[1] berisi kata-kata hashtag tanpa tanda '#'
+                foreach ($matches[1] as $tag) {
+                    $tagLower = strtolower($tag);
+                    if (!isset($tagCounts[$tagLower])) {
+                        $tagCounts[$tagLower] = 0;
+                    }
+                    $tagCounts[$tagLower]++;
+                }
+            }
+        }
+        
+        // Urutkan nilai terbanyak ke terdikit
+        arsort($tagCounts);
+        // Ambil 5 teratas
+        $trendingTags = array_slice($tagCounts, 0, 5, true);
+        
+        $trendingFormat = [];
+        foreach ($trendingTags as $tag => $count) {
+            $trendingFormat[] = [
+                'tag' => $tag,
+                'count' => $count
+            ];
+        }
+        // --- End ---
+
+        $responsePayload = $this->transformPaginate($posts, $user);
+        $responsePayload['trending_tags'] = $trendingFormat;
+
+        return response()->json($responsePayload);
     }
 
     /**
