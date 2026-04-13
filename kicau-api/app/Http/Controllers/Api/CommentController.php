@@ -42,6 +42,18 @@ class CommentController extends Controller
         // hal ini mencegah N+1 problem ketika dirender kembali dalam antarmuka UI
         $comment->load(['user', 'likes']);
 
+        // Kirim notifikasi ke pemilik pos (jangan notifikasi diri sendiri)
+        if ($post->user_id !== Auth::id()) {
+            \App\Models\Notification::create([
+                'user_id'         => $post->user_id,
+                'actor_id'        => Auth::id(),
+                'type'            => 'comment',
+                'notifiable_type' => \App\Models\Post::class,
+                'notifiable_id'   => $post->id,
+                'message'         => Auth::user()->name . ' mengomentari kicauan kamu.',
+            ]);
+        }
+
         $authUser = Auth::user();
 
         return response()->json([

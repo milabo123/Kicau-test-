@@ -68,7 +68,7 @@
                 <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex-grow-1" id="compose-form">
                     @csrf
                     <textarea name="body" id="compose-body" class="form-control compose-input mb-2 @error('body') is-invalid @enderror" rows="3"
-                        placeholder="Apa yang sedang kamu pikirkan?" maxlength="500">{{ old('body') }}</textarea>
+                        placeholder="Apa yang sedang kamu pikirkan?" maxlength="250">{{ old('body') }}</textarea>
                     @error('body')
                         <div class="invalid-feedback d-block mb-2 mt-n1" style="color:#FF6584; font-size: 0.85rem;">{{ $message }}</div>
                     @enderror
@@ -88,7 +88,7 @@
                             </div>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span id="char-count">0/500</span>
+                            <span id="char-count">0/250</span>
                             <button type="submit" class="btn-primary-kicau btn btn-sm">
                                 <i class="bi bi-send-fill me-1"></i>Kicau!
                             </button>
@@ -188,7 +188,7 @@
                 <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <textarea name="body" class="form-control compose-input mb-3 @error('body') is-invalid @enderror" rows="4"
-                        placeholder="Apa yang ingin kamu bagikan?" maxlength="500">{{ old('body') }}</textarea>
+                        placeholder="Apa yang ingin kamu bagikan?" maxlength="250">{{ old('body') }}</textarea>
                     @error('body')
                         <div class="invalid-feedback d-block mb-3 mt-n2" style="color:#FF6584; font-size: 0.85rem;">{{ $message }}</div>
                     @enderror
@@ -213,8 +213,8 @@ const charCount = document.getElementById('char-count');
 if (composeBody) {
     composeBody.addEventListener('input', function() {
         const len = this.value.length;
-        charCount.textContent = len + '/500';
-        charCount.classList.toggle('warning', len > 450);
+        charCount.textContent = len + '/250';
+        charCount.classList.toggle('warning', len > 200);
     });
 }
 

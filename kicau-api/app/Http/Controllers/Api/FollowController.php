@@ -49,6 +49,16 @@ class FollowController extends Controller
             ]);
             $isFollowing = true;
             $message     = 'Kamu sekarang mengikuti @' . $user->username . '!';
+
+            // Kirim notifikasi ke pengguna yang di-follow
+            \App\Models\Notification::create([
+                'user_id'         => $user->id,
+                'actor_id'        => $currentUser->id,
+                'type'            => 'follow',
+                'notifiable_type' => \App\Models\User::class,
+                'notifiable_id'   => $currentUser->id,
+                'message'         => $currentUser->name . ' mulai mengikuti kamu.',
+            ]);
         }
 
         return response()->json([

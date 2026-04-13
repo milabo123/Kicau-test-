@@ -176,6 +176,26 @@ class ApiService
         return $req->put("{$this->baseUrl}/profile", $data);
     }
 
+    // ──────────────────────────── Notifications ────────────────────────────
+
+    /** Mengambil daftar notifikasi pengguna */
+    public function getNotifications(int $page = 1): Response
+    {
+        return $this->authRequest()->get("{$this->baseUrl}/notifications", ['page' => $page]);
+    }
+
+    /** Menandai semua notifikasi sebagai dibaca */
+    public function markAllNotificationsRead(): Response
+    {
+        return $this->authRequest()->post("{$this->baseUrl}/notifications/read");
+    }
+
+    /** Menandai satu notifikasi sebagai dibaca */
+    public function markNotificationRead(int $id): Response
+    {
+        return $this->authRequest()->post("{$this->baseUrl}/notifications/{$id}/read");
+    }
+
     // ──────────────────────────── Internal Helpers ────────────────────────────
 
     /** Request tanpa autentikasi */

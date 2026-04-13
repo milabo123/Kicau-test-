@@ -41,12 +41,12 @@ class PostController extends Controller
         $posts = $query->latest()->paginate(15);
 
         // --- Start: Trending Hashtags Calculation ---
-        // Ambil 100 post terakhir dari seluruh platform untuk dianalisis
-        $recentPosts = Post::latest()->take(100)->get(['body']);
+        // Ambil semua post dari platform untuk menganalisis hashtag
+        $allPosts = Post::whereNotNull('body')->pluck('body');
         $tagCounts = [];
 
-        foreach ($recentPosts as $p) {
-            if (preg_match_all('/#(\w+)/', $p->body, $matches)) {
+        foreach ($allPosts as $body) {
+            if (preg_match_all('/#(\w+)/', $body, $matches)) {
                 // $matches[1] berisi kata-kata hashtag tanpa tanda '#'
                 foreach ($matches[1] as $tag) {
                     $tagLower = strtolower($tag);
@@ -60,11 +60,9 @@ class PostController extends Controller
         
         // Urutkan nilai terbanyak ke terdikit
         arsort($tagCounts);
-        // Ambil 5 teratas
-        $trendingTags = array_slice($tagCounts, 0, 5, true);
-        
+
         $trendingFormat = [];
-        foreach ($trendingTags as $tag => $count) {
+        foreach ($tagCounts as $tag => $count) {
             $trendingFormat[] = [
                 'tag' => $tag,
                 'count' => $count
@@ -89,7 +87,7 @@ class PostController extends Controller
     {
         // Validasi input
         $request->validate([
-            'body'  => 'nullable|string|max:500',
+            'body'  => 'nullable|string|max:250',
             'media' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,webm|max:102400',
         ]);
 
@@ -156,7 +154,7 @@ class PostController extends Controller
         }
 
         $request->validate([
-            'body' => 'nullable|string|max:500',
+            'body' => 'nullable|string|max:250',
         ]);
 
         if (!$request->body && !$post->media_path) {

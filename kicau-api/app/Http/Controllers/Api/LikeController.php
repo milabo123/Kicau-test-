@@ -37,6 +37,18 @@ class LikeController extends Controller
             // Jika belum ada, memunculkan instance data Like baru ke database
             Like::create(['post_id' => $post->id, 'user_id' => $user->id]);
             $liked = true;
+
+            // Kirim notifikasi ke pemilik pos (jangan notifikasi diri sendiri)
+            if ($post->user_id !== $user->id) {
+                \App\Models\Notification::create([
+                    'user_id'         => $post->user_id,
+                    'actor_id'        => $user->id,
+                    'type'            => 'like',
+                    'notifiable_type' => Post::class,
+                    'notifiable_id'   => $post->id,
+                    'message'         => $user->name . ' menyukai kicauan kamu.',
+                ]);
+            }
         }
 
         // Mengembalikan respons dengan format array sederhana untuk segera dimuat ulang oleh Javascript/AJAX client

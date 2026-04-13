@@ -70,6 +70,12 @@ class User extends Authenticatable
         return $this->hasMany(Follow::class, 'follower_id');
     }
 
+    /** Semua notifikasi yang diterima oleh pengguna ini */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->latest();
+    }
+
     // ───────────────────── Helpers ─────────────────────
 
     /**

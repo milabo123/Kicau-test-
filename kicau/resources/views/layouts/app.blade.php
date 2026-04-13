@@ -344,6 +344,19 @@
 
         @php $sessionUser = session('user', []); @endphp
         <div class="d-flex align-items-center gap-2">
+            {{-- Notification Bell --}}
+            <a href="{{ route('notifications.index') }}" class="btn position-relative p-2" id="notif-bell"
+               style="background:var(--kicau-surface2); border:1px solid var(--kicau-border); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; transition: border-color 0.2s;"
+               title="Notifikasi"
+               onmouseover="this.style.borderColor='var(--kicau-primary)'"
+               onmouseout="this.style.borderColor='var(--kicau-border)'">
+                <i class="bi bi-bell-fill" style="font-size:1.1rem; color:var(--kicau-text);"></i>
+                <span id="notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                      style="background:var(--kicau-secondary); font-size:0.65rem; display:none; min-width:18px;">
+                    0
+                </span>
+            </a>
+
             <div class="dropdown">
                 <button class="btn d-flex align-items-center gap-2 p-1 pe-2" style="background:var(--kicau-surface2);border:1px solid var(--kicau-border);border-radius:999px;" data-bs-toggle="dropdown">
                     <img src="{{ $sessionUser['avatar_url'] ?? 'https://ui-avatars.com/api/?name=User&background=6C63FF&color=fff&size=128' }}" class="rounded-circle" width="34" height="34" style="object-fit:cover;" alt="{{ $sessionUser['name'] ?? 'User' }}">
@@ -556,6 +569,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+@if(session('api_token'))
+<script>
+// Notification badge polling
+function updateNotifBadge() {
+    fetch('{{ route("notifications.unreadCount") }}', {
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        const badge = document.getElementById('notif-badge');
+        if (badge) {
+            const count = data.unread_count || 0;
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'inline-flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    })
+    .catch(() => {});
+}
+// Update on page load and every 30 seconds
+document.addEventListener('DOMContentLoaded', updateNotifBadge);
+setInterval(updateNotifBadge, 30000);
+</script>
+@endif
 
 @stack('scripts')
 </body>

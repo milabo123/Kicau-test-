@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FollowController;
 use App\Http\Controllers\Api\LikeController;
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Follow
     Route::post('/users/{user}/follow', [FollowController::class, 'toggle']);
+
+    // Notifications
+    Route::get('/notifications',                          [NotificationController::class, 'index']);
+    Route::post('/notifications/read',                    [NotificationController::class, 'markAllRead']);
+    Route::post('/notifications/{notification}/read',     [NotificationController::class, 'markRead']);
 
     // Profile
     Route::get('/users/{username}', [ProfileController::class, 'show'])->where('username', '[a-zA-Z0-9_-]+');

@@ -3,7 +3,7 @@
         'name' => 'kicau/kicau-api',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7a74ae436569e962307dedac207081e7ad7432b1',
+        'reference' => 'd7500966f36257be327435242e83f09a0e0d8c1c',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -385,7 +385,7 @@
         'kicau/kicau-api' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7a74ae436569e962307dedac207081e7ad7432b1',
+            'reference' => 'd7500966f36257be327435242e83f09a0e0d8c1c',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -58,7 +58,7 @@ class PostController extends Controller
     {
         // Standar validasi file ukuran maks 100MB di lapisan UI sebelum menjejali bandwidth server API
         $request->validate([
-            'body'  => 'nullable|string|max:500',
+            'body'  => 'nullable|string|max:250',
             'media' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,webm|max:102400',
         ]);
 
@@ -124,7 +124,7 @@ class PostController extends Controller
     public function update(Request $request, int $id)
     {
         $request->validate([
-            'body' => 'required|string|max:500',
+            'body' => 'required|string|max:250',
         ]);
 
         $response = $this->api->updatePost($id, $request->body);

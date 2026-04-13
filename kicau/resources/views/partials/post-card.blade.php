@@ -61,7 +61,7 @@
                     <form action="{{ route('posts.update', $postId) }}" method="POST" class="edit-post-handler">
                         @csrf
                         @method('PUT')
-                        <textarea name="body" class="form-control compose-input mb-2" rows="2" required maxlength="500">{{ $post['body'] }}</textarea>
+                        <textarea name="body" class="form-control compose-input mb-2" rows="2" required maxlength="250">{{ $post['body'] }}</textarea>
                         <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditPost({{ $postId }})" style="font-size:0.75rem;">Batal</button>
                         <button type="submit" class="btn btn-primary-kicau btn-sm" style="font-size:0.75rem;">Simpan</button>
                     </form>
